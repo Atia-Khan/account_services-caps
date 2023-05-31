@@ -1,4 +1,6 @@
-package com.accountservices.users;
+package com.accountservices.users.Model;
+
+import java.util.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -9,19 +11,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity (name = "Users")
-public class User {
+@Entity(name = "Counsilors")
+public class Counsilor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
-    private String email;
-    private String password;
-    private Integer status;
-    private String role;
+    private Long counsilorId;
+    private String firstName;
+    private String lastName;
+    private Date date;
+    private String specialization;
+    private String description;
 
 }
