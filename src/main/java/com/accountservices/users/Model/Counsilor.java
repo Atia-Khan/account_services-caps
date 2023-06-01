@@ -15,14 +15,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "Counsilors")
+@Entity(name = "Counselors")
 public class Counsilor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long counsilorId;
-    private String firstName;
-    private String lastName;
-    private Date date;
+    private Long counselorId;
     private String specialization;
     private String description;
 

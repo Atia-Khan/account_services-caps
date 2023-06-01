@@ -21,7 +21,12 @@ public class User {
     private Long userId;
     private String email;
     private String password;
+    private String First_name;
+    private String Last_name;
+    private String gender;
+    private String phone_number;
+    private String address;
+    private String national_identity;
     private Integer status;
-    private String role;
-
+    private Integer role;
 }
