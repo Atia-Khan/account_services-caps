@@ -31,12 +31,12 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-    private String First_name;
-    private String Last_name;
+    private String firstName;
+    private String lastName;
     private String gender;
-    private String phone_number;
+    private String phoneNumber;
     private String address;
-    private String national_identity;
+    private String nationalId;
     private boolean is_active;
 
   @Enumerated(EnumType.STRING)
