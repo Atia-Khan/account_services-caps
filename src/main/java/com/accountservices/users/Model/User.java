@@ -36,6 +36,7 @@ public class User {
     private String gender;
     private String phoneNumber;
     private String address;
+    @Column(unique = true)
     private String nationalId;
     private boolean is_active;
 
