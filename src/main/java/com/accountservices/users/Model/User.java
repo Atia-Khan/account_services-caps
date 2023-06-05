@@ -31,11 +31,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-<<<<<<< HEAD
     // private String hashesPassword;
-=======
-    private String hashedPassword;
->>>>>>> 67a04bb (refactored)
     private String firstName;
     private String lastName;
     private String gender;
