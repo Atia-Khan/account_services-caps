@@ -25,8 +25,13 @@ public class UserController {
 
     @PostMapping("/signup")
     public void post_User(@RequestBody User user){
+<<<<<<< HEAD
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
+=======
+        String password = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(password);
+>>>>>>> 67a04bb (refactored)
         this.userRepo.save(user);
     }    
   
