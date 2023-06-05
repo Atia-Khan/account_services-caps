@@ -31,7 +31,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-    private String hashesPassword;
+    // private String hashesPassword;
     private String firstName;
     private String lastName;
     private String gender;

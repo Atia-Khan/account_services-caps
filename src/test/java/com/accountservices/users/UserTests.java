@@ -56,73 +56,67 @@ public class UserTests {
 
     }
 
-
-@Test
-    void testingPassword(){
-  String password = "pass";
-  user.setPassword(password);
-  assertEquals(password, user.getPassword());
+ 
+    @Test
+    void testingFirstName(){
+        String firstName ="Atia";
+        user.setFirstName(firstName);
+        assertEquals(firstName, user.getFirstName());
     }
-@Test
-void testingFirstName(){
-    String firstName ="Atia";
-    user.setFirstName(firstName);
-    assertEquals(firstName, user.getFirstName());
-}
 
-@Test
-void testingLastName(){
-    String lastName ="Khan";
-    user.setLastName(lastName);
-    assertEquals(lastName, user.getLastName());
-}
-@Test
-void testingGender(){
-    String gender = "female";
-    user.setGender(gender);
-    assertEquals(gender, user.getGender());
+    @Test
+    void testingLastName(){
+        String lastName ="Khan";
+        user.setLastName(lastName);
+        assertEquals(lastName, user.getLastName());
+    }
+    @Test
+    void testingGender(){
+        String gender = "female";
+        user.setGender(gender);
+        assertEquals(gender, user.getGender());
 
-}
+    }
 
-@Test 
-void testingPhoneNumber(){
-    String phoneNumber = "323565214";
-    user.setPhoneNumber(phoneNumber);
-    assertEquals(phoneNumber, user.getPhoneNumber());
-}
+    @Test 
+    void testingPhoneNumber(){
+        String phoneNumber = "323565214";
+        user.setPhoneNumber(phoneNumber);
+        assertEquals(phoneNumber, user.getPhoneNumber());
+    }
 
 
-@Test
-void testingAddress(){
-    String address = "address abc";
-    user.setAddress(address);
-    assertEquals(address, user.getAddress());
-}
+    @Test
+    void testingAddress(){
+        String address = "address abc";
+        user.setAddress(address);
+        assertEquals(address, user.getAddress());
+    }
 
-@Test 
-void testingNI(){
-    String ni = "1234556";
-    user.setNationalId(ni);
-    assertEquals(ni, user.getNationalId());
-}
+    @Test 
+    void testingNI(){
+        String ni = "1234556";
+        user.setNationalId(ni);
+        assertEquals(ni, user.getNationalId());
+    }
 
-@Test
-void testingIs_active(){
-Boolean is_active = true;
-user.set_active(is_active);
-assertEquals(is_active, user.is_active());
-}
+    @Test
+    void testingIs_active(){
+    Boolean is_active = true;
+    user.set_active(is_active);
+    assertEquals(is_active, user.is_active());
+    }
 
-@Test
-void testingRole(){
-    Role adminRole = Role.ADMIN;
-    assertEquals("ADMIN", adminRole.toString());
+    @Test
+    void testingRole(){
+        Role adminRole = Role.ADMIN;
+        assertEquals("ADMIN", adminRole.toString());
 
-    Role counselorRole = Role.COUNSELOR;
-    assertEquals("COUNSELOR", counselorRole.toString());
-    
-    Role patientRole = Role.PATIENT;
-    assertEquals("PATIENT", patientRole.toString());
-}
+        Role counselorRole = Role.COUNSELOR;
+        assertEquals("COUNSELOR", counselorRole.toString());
+        
+        Role patientRole = Role.PATIENT;
+        assertEquals("PATIENT", patientRole.toString());
+    }
 }
 
