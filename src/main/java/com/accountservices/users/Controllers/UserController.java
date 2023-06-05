@@ -1,6 +1,7 @@
 package com.accountservices.users.Controllers;
 import java.util.List;
 import java.util.Optional;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +21,8 @@ public class UserController {
     }
     @PostMapping("/signup")
     public void post_User(@RequestBody User user){
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setHashesPassword(hashedPassword);
         this.userRepo.save(user);
     }
     
@@ -29,9 +32,14 @@ public class UserController {
         Optional<User> optional = userRepo.findByEmail(user.getEmail());
         if (optional.isPresent()) {
             User userDb = optional.get();
-            if (userDb.getPassword().equals(user.getPassword())) {
+            if (BCrypt.checkpw(user.getPassword(), userDb.getHashesPassword())) {
                 System.out.println("Login successful");
+            }else {
+                System.out.println("Incorrect Password!!!");
             }
+        } 
+        else {
+            System.out.println("User not found.");
         }
     }
 }
