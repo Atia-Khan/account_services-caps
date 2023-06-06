@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
+
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mindrot.jbcrypt.BCrypt;
@@ -37,8 +41,7 @@ public class UserControllerTests {
 
     @Mock
     private UserRepository userRepo;
-    @Autowired
-    private ObjectMapper objectMapper;
+  
     @InjectMocks
     private UserController userController;
 
@@ -50,12 +53,13 @@ public class UserControllerTests {
 
     @Test
     public void testGetAllUsers() throws Exception {
-        List<User> userList = new ArrayList<>();
-        userList.add(new User("2023-06-01", "2023-06-02", "john@example.com", "password123", "John", "Doe", "Male",
-                "1234567890", "123 Main Street, City", "ABC123XYZ", "true", "USER"));
 
-        userList.add(new User("2023-06-01", "2023-06-02", "john@example.com", "password123", "John", "Doe", "Male",
-                "1234567890", "123 Main Street, City", "ABC123XYZ", "true", "USER"));
+        User user1 = new User(1L, null, null, "Atia@xloopdigital.com", "12345", "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null);
+        User user2 = new User(1L, null, null, "Atia@xloopdigital.com", "12345", "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null);
+        List<User> userList = new ArrayList<>();
+
+        userList.add(user1);
+        userList.add(user2);
 
         when(userRepo.findAll()).thenReturn(userList);
 
@@ -65,71 +69,54 @@ public class UserControllerTests {
 
     @Test
     public void testPostUser() throws Exception {
-        User user = (new User("2023-06-01", "2023-06-02", "john@example.com", "password123", "John", "Doe", "Male",
-                "1234567890", "123 Main Street, City", "ABC123XYZ", "true", "USER"));
-        ;
-
+        User user1 = new User(1L, null, null, "Atia@xloopdigital.com", "12345", "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper.writeValueAsString(user1);
         mockMvc.perform(post("/user/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(user)))
+                .content(requestBody))
                 .andExpect(status().isOk());
-
     }
-    // @Test
-    // public void testLogin_ValidCredentials() throws Exception {
-    //     User user = new User();
-    //     user.setEmail("test@example.com");
-    //     user.setPassword("password");
 
-    //     User userDb = new User();
-    //     userDb.setEmail("test@example.com");
-    //     userDb.setPassword(BCrypt.hashpw("password", BCrypt.gensalt()));
-
-    //     given(userRepo.findByEmail(user.getEmail())).willReturn(Optional.of(userDb));
-
-    //     mockMvc.perform(post("/user/login")
-    //             .contentType(MediaType.APPLICATION_JSON)
-    //             .content(objectMapper.writeValueAsString(user)))
-    //             .andExpect(status().isOk());
-    // }
     @Test
     public void testLogin_ValidCredentials() throws Exception {
-        User user = (new User("2023-06-01", "2023-06-02", "john@example.com", "password123", "John", "Doe", "Male",
-                "1234567890", "123 Main Street, City", "ABC123XYZ", "true", "USER"));
-        
-        User userDb = (new User("2023-06-01", "2023-06-02", "john@example.com", "password123", "John", "Doe", "Male",
-                "1234567890", "123 Main Street, City", "ABC123XYZ", "true", "USER"));
-        
-
-        when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(userDb));
-
+        User user1 = new User(1L, null, null, "Atia@xloopdigital.com", "12345", "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null);
+        User userDb = new User(1L, null, null, "Atia@xloopdigital.com", BCrypt.hashpw("12345", BCrypt.gensalt()), "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null);
+    
+        when(userRepo.findByEmail(user1.getEmail())).thenReturn(Optional.of(userDb));
+    
         mockMvc.perform(post("/user/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(user)))
+                .content(asJsonString(user1)))
                 .andExpect(status().isOk());
-
     }
+  
 
     @Test
-    public void testLogin_IncorrectPassword() throws Exception {
-        User user = new User("john@example.com", "wrongpassword");
+public void testLogin_IncorrectPassword() throws Exception {
+    String email = "john@example.com";
+    String plainPassword = "123456789";
+    String hashedPassword = BCrypt.hashpw("mypassword", BCrypt.gensalt());
+    
 
-        User userDb = new User("John", "john@example.com", "$2a$10$abcde...");
+    User user = new User(email, plainPassword);
+    User userDb = new User("another@example.com", hashedPassword); // Using a different email to simulate user not found
 
-        when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(userDb));
 
-        mockMvc.perform(post("/user/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(user)))
-                .andExpect(status().isOk());
+    when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(userDb));
 
-        
-    }
+    mockMvc.perform(post("/user/login")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(asJsonString(user)))
+            .andExpect(status().isOk())
+            .andExpect(content().string("Incorrect Password!!!"));
+}
+
 
     @Test
     public void testLogin_UserNotFound() throws Exception {
-        User user = (new User("2023-06-01", "2023-06-02", "john@example.com", "password123", "John", "Doe", "Male",
-                "1234567890", "123 Main Street, City", "ABC123XYZ", "true", "USER"));
+        User user = (new User(1L, null, null, "Atia@xloopdigital.com", "12345", "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null));
+        User userDb = new User(1L, null, null, "Atia@xloopdigital.com", BCrypt.hashpw("12345", BCrypt.gensalt()), "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null);
 
         when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.empty());
 
@@ -141,7 +128,6 @@ public class UserControllerTests {
         
     }
 
-    // Utility method to convert objects to JSON strings
     private String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);

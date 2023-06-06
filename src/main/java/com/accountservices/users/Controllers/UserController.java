@@ -3,6 +3,7 @@ import java.util.List;
 import java.util.Optional;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,20 +32,20 @@ public class UserController {
     }    
   
     @PostMapping("/login")
-    public void login(@RequestBody User user) {
+    public ResponseEntity<String> login(@RequestBody User user) {
         Optional<User> optional = userRepo.findByEmail(user.getEmail());
 
         if (optional.isPresent()) {
             User userDb = optional.get();
             if (BCrypt.checkpw(user.getPassword(), userDb.getPassword())) {
-                System.out.println("Login successful");
+                return ResponseEntity.ok("Login successful");
             }else {
-                System.out.println("Incorrect Password!!!");
+                return ResponseEntity.ok("Incorrect Password!!!");
             }
         } 
 
         else {
-            System.out.println("User not found.");
+            return ResponseEntity.ok("User not found.");
         }
     }
 
