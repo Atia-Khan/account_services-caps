@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.accountservices.users.Model.User;
 import com.accountservices.users.Repositories.UserRepository;
-@CrossOrigin("*                                               ")
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/user")
 public class UserController {

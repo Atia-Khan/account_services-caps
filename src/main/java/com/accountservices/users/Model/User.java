@@ -23,6 +23,16 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity (name = "Users")
 public class User {
+    public User(String string, String string2, String string3, String string4, String string5, String string6,
+      String string7, String string8, String string9, String string10, String string11, String string12) {
+  }
+
+    public User(String string, String string2) {
+    }
+
+    public User(String string, String string2, String string3) {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userId;
@@ -31,7 +41,7 @@ public class User {
     @Column(unique = true)
     private String email;
     private String password;
-    // private String hashesPassword;
+    
     private String firstName;
     private String lastName;
     private String gender;

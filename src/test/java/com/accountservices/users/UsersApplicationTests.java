@@ -11,3 +11,6 @@ class UsersApplicationTests {
 	}
 
 }
+
+
+// (new User("2023-06-01", "2023-06-02", "john@example.com", "password123", "John", "Doe", "Male", "1234567890", "123 Main Street, City", "ABC123XYZ", "true", "USER"));
