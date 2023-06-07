@@ -65,7 +65,7 @@ public class UserController {
     @DeleteMapping("/delete/{id}")
         public String deleteById(@PathVariable Long id){
             this.userRepo.deleteById(id);
-            return "User of Id" + userRepo.getuserId() + "has been deleted!!";
+            return "User of Id has been deleted!!";
             
         }
 
@@ -92,7 +92,7 @@ public class UserController {
 
           }
             
-            return userRepo.getuserId() + "User Details Updated Successfully!!";
+            return "User Details Updated Successfully!!";
         }
         
 
