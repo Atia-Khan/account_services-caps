@@ -20,4 +20,5 @@ public class ForgotPassword {
     private Long id;
     private String email;
     private String token;
+    private String password;
 }

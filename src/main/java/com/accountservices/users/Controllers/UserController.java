@@ -57,16 +57,14 @@ public class UserController {
     }
     @PostMapping("/forgotpassword/update")
     public ResponseEntity<String> updatePassword(@RequestBody ForgotPassword request) {
-        System.out.println("this my variable: --------------------");
         Optional<ForgotPassword> optionalForgotPassword = forgotRepo.findByEmailAndToken(request.getEmail(), request.getToken());
-
 
         if (optionalForgotPassword.isPresent()) {
             Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
 
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
-                String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+                String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
                 user.setPassword(hashedPassword);
                 userRepository.save(user);
                 return ResponseEntity.ok("Password updated successfully!");
@@ -80,18 +78,20 @@ public class UserController {
 
 
 
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
         Optional<User> optional = userRepository.findByEmail(user.getEmail());
 
         if (optional.isPresent()) {
             User userDb = optional.get();
-            if (BCrypt.checkpw(user.getPassword(), userDb.getPassword())) {
+            if (BCrypt.checkpw(user.getPassword(), userDb.getPassword()))
+            {
                 return ResponseEntity.ok("Login successful");
             } else {
                 return ResponseEntity.ok("Incorrect Password!!!");
             }
-        } else {
+        } else {    
             return ResponseEntity.ok("User not found.");
         }
     }
