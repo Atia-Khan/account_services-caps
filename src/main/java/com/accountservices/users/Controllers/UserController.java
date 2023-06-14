@@ -1,79 +1,119 @@
 package com.accountservices.users.Controllers;
-import java.util.List;
-import java.util.Optional;
+    
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.accountservices.users.Model.ForgotPassword;
 import com.accountservices.users.Model.User;
+import com.accountservices.users.Repositories.ForgotRepo;
 import com.accountservices.users.Repositories.UserRepository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    private UserRepository userRepo;
+    private  UserRepository userRepository;
+    @Autowired
+    private ForgotRepo forgotRepo;
+
 
     @GetMapping("")
-    public List<User> getAllUsers(){
-        return userRepo.findAll();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     @PostMapping("/signup")
-    public void post_User(@RequestBody User user){
+    public void postUser(@RequestBody User user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
-        this.userRepo.save(user);
-    }    
-  
+        userRepository.save(user);
+    }
+
+    @PostMapping("/ForgotPassword/{email}")
+    public ResponseEntity<Map<String, String>> forgotPassword(@PathVariable("email") String email) {
+        Optional<User> optional = userRepository.findByEmail(email);
+        if (optional.isPresent()) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "yes Present");
+            return ResponseEntity.ok(response);
+        } else {
+            Map<String, String> response = new HashMap<>();
+            response.put("error", "User not found");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    @PostMapping("/ForgotPassword/token")
+    public ResponseEntity<String> saveForgotPasswordToken(@RequestBody ForgotPassword forgotPassword) {
+        forgotRepo.save(forgotPassword);
+        return ResponseEntity.ok("Data Saved");
+    }
+    @PostMapping("/forgotpassword/update")
+    public ResponseEntity<String> updatePassword(@RequestBody ForgotPassword request) {
+        System.out.println("this my variable: --------------------");
+        Optional<ForgotPassword> optionalForgotPassword = forgotRepo.findByEmailAndToken(request.getEmail(), request.getToken());
+
+
+        if (optionalForgotPassword.isPresent()) {
+            Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+                user.setPassword(hashedPassword);
+                userRepository.save(user);
+                return ResponseEntity.ok("Password updated successfully!");
+            } else {
+                return ResponseEntity.ok("User not found.");
+            }
+        } else {
+            return ResponseEntity.ok("Invalid email or token.");
+        }
+    }
+
+
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User user) {
-        Optional<User> optional = userRepo.findByEmail(user.getEmail());
+        Optional<User> optional = userRepository.findByEmail(user.getEmail());
 
         if (optional.isPresent()) {
             User userDb = optional.get();
             if (BCrypt.checkpw(user.getPassword(), userDb.getPassword())) {
                 return ResponseEntity.ok("Login successful");
-            }else {
+            } else {
                 return ResponseEntity.ok("Incorrect Password!!!");
             }
-        } 
-        else {
+        } else {
             return ResponseEntity.ok("User not found.");
         }
     }
 
-    @PostMapping("/update")
-    public String updateUsers(@RequestBody User user){
-        this.userRepo.save(user);
-        return "user details updated";
-    }
 
     @DeleteMapping("/delete")
-    public String deleteUser(User user){
-        this.userRepo.delete(user);
-        return "user deleted";
+    public String deleteUser(User user) {
+        userRepository.delete(user);
+        return "User deleted";
     }
 
     @DeleteMapping("/delete/{id}")
-        public String deleteById(@PathVariable Long id){
-            this.userRepo.deleteById(id);
-            return "User of Id has been deleted!!";
-            
-        }
+    public String deleteById(@PathVariable Long id) {
+        userRepository.deleteById(id);
+        return "User with ID has been deleted!";
+    }
 
-        @PostMapping("/update/{id}")
-        public String updateById(@PathVariable Long id, @RequestBody User newUser) {
-          User existingUser = userRepo.findById(id).orElse(null);
+    @PostMapping("/update/{id}")
+    public String updateById(@PathVariable Long id, @RequestBody User newUser) {
+        User existingUser = userRepository.findById(id).orElse(null);
 
-          if(existingUser != null){
+        if (existingUser != null) {
             existingUser.setUserId(newUser.getUserId());
             existingUser.setCreated(newUser.getCreated());
             existingUser.setUpdated(newUser.getUpdated());
@@ -88,16 +128,9 @@ public class UserController {
             existingUser.setRole(newUser.getRole());
             existingUser.set_active(newUser.is_active());
 
-            userRepo.save(newUser);
-
-          }
-            
-            return "User Details Updated Successfully!!";
+            userRepository.save(existingUser);
         }
-        
 
+        return "User details updated successfully!";
     }
-
-
-
-
+}
