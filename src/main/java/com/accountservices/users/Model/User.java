@@ -25,7 +25,7 @@ import lombok.Setter;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long userId;
+    private Long id;
     private Date created;
     private Date updated;
     @Column(unique = true)

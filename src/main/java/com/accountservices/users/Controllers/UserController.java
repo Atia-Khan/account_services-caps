@@ -114,7 +114,7 @@ public class UserController {
         User existingUser = userRepository.findById(id).orElse(null);
 
         if (existingUser != null) {
-            existingUser.setUserId(newUser.getUserId());
+            existingUser.setId(newUser.getId());
             existingUser.setCreated(newUser.getCreated());
             existingUser.setUpdated(newUser.getUpdated());
             existingUser.setEmail(newUser.getEmail());
