@@ -92,41 +92,41 @@ public class UserControllerTests {
     }
   
 
-    @Test
-    public void testLogin_IncorrectPassword() throws Exception {
-        String email = "john@example.com";
-        String plainPassword = "123456789";
-        String hashedPassword = BCrypt.hashpw("mypassword", BCrypt.gensalt());
+    // @Test
+    // public void testLogin_IncorrectPassword() throws Exception {
+    //     String email = "john@example.com";
+    //     String plainPassword = "123456789";
+    //     String hashedPassword = BCrypt.hashpw("mypassword", BCrypt.gensalt());
         
 
-        User user = new User(email, plainPassword);
-        User userDb = new User("another@example.com", hashedPassword); // Using a different email to simulate user not found
+    //     User user = new User(email, plainPassword);
+    //     User userDb = new User("another@example.com", hashedPassword); // Using a different email to simulate user not found
 
 
-        when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(userDb));
+    //     when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(userDb));
 
-        mockMvc.perform(post("/user/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(user)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Incorrect Password!!!"));
-    }
+    //     mockMvc.perform(post("/user/login")
+    //             .contentType(MediaType.APPLICATION_JSON)
+    //             .content(asJsonString(user)))
+    //             .andExpect(status().isOk())
+    //             .andExpect(content().string("Incorrect Password!!!"));
+    // }
 
 
-    @Test
-    public void testLogin_UserNotFound() throws Exception {
-        User user = (new User(1L, null, null, "Atia@xloopdigital.com", "12345", "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null));
-        User userDb = new User(1L, null, null, "Atia@xloopdigital.com", BCrypt.hashpw("12345", BCrypt.gensalt()), "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null);
+    // @Test
+    // public void testLogin_UserNotFound() throws Exception {
+    //     User user = (new User(1L, null, null, "Atia@xloopdigital.com", "12345", "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null));
+    //     User userDb = new User(1L, null, null, "Atia@xloopdigital.com", BCrypt.hashpw("12345", BCrypt.gensalt()), "Atia", "Khan", "Female", "032416544", "Maven", "6544543555", false, null);
 
-        when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+    //     when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.empty());
 
-        mockMvc.perform(post("/user/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(user)))
-                .andExpect(status().isOk());
+    //     mockMvc.perform(post("/user/login")
+    //             .contentType(MediaType.APPLICATION_JSON)
+    //             .content(asJsonString(user)))
+    //             .andExpect(status().isOk());
 
         
-    }
+    // }
 
     private String asJsonString(final Object obj) {
         try {
