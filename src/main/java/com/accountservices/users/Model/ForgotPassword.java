@@ -21,4 +21,9 @@ public class ForgotPassword {
     private String email;
     private String token;
     private String password;
+    public void setExpirationTime(long expirationTimeMillis) {
+    }
+    public long getExpirationTime() {
+        return 0;
+    }
 }

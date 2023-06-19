@@ -93,24 +93,24 @@ public class UserControllerTests {
   
 
     @Test
-public void testLogin_IncorrectPassword() throws Exception {
-    String email = "john@example.com";
-    String plainPassword = "123456789";
-    String hashedPassword = BCrypt.hashpw("mypassword", BCrypt.gensalt());
-    
+    public void testLogin_IncorrectPassword() throws Exception {
+        String email = "john@example.com";
+        String plainPassword = "123456789";
+        String hashedPassword = BCrypt.hashpw("mypassword", BCrypt.gensalt());
+        
 
-    User user = new User(email, plainPassword);
-    User userDb = new User("another@example.com", hashedPassword); // Using a different email to simulate user not found
+        User user = new User(email, plainPassword);
+        User userDb = new User("another@example.com", hashedPassword); // Using a different email to simulate user not found
 
 
-    when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(userDb));
+        when(userRepo.findByEmail(user.getEmail())).thenReturn(Optional.of(userDb));
 
-    mockMvc.perform(post("/user/login")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(asJsonString(user)))
-            .andExpect(status().isOk())
-            .andExpect(content().string("Incorrect Password!!!"));
-}
+        mockMvc.perform(post("/user/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(user)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Incorrect Password!!!"));
+    }
 
 
     @Test

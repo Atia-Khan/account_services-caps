@@ -2,6 +2,7 @@ package com.accountservices.users.Controllers;
     
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.accountservices.users.Model.ForgotPassword;
@@ -49,34 +50,70 @@ public class UserController {
             return ResponseEntity.ok(response);
         }
     }
-
     @PostMapping("/ForgotPassword/token")
     public ResponseEntity<String> saveForgotPasswordToken(@RequestBody ForgotPassword forgotPassword) {
+        long expirationTimeMillis = System.currentTimeMillis() + (3 * 60 * 1000); // Set expiration time to 3 minutes from now
+        forgotPassword.setExpirationTime(expirationTimeMillis);
         forgotRepo.save(forgotPassword);
         return ResponseEntity.ok("Data Saved");
     }
+
+    // @PostMapping("/ForgotPassword/token")
+    // public ResponseEntity<String> saveForgotPasswordToken(@RequestBody ForgotPassword forgotPassword) {
+    //     forgotRepo.save(forgotPassword);
+    //     return ResponseEntity.ok("Data Saved");
+    // }
+
+    // @PostMapping("/forgotpassword/update")
+    // public ResponseEntity<String> updatePassword(@RequestBody ForgotPassword request) {
+    //     Optional<ForgotPassword> optionalForgotPassword = forgotRepo.findByEmailAndToken(request.getEmail(), request.getToken());
+
+    //     if (optionalForgotPassword.isPresent()) {
+    //         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
+
+    //         if (optionalUser.isPresent()) {
+    //             User user = optionalUser.get();
+    //             String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+    //             user.setPassword(hashedPassword);
+    //             userRepository.save(user);
+    //             return ResponseEntity.ok("Password updated successfully!");
+    //         } else {
+    //             return ResponseEntity.ok("User not found.");
+    //         }
+    //     } else {
+    //         return ResponseEntity.ok("Invalid email or token.");
+    //     }
+    // }
     @PostMapping("/forgotpassword/update")
     public ResponseEntity<String> updatePassword(@RequestBody ForgotPassword request) {
         Optional<ForgotPassword> optionalForgotPassword = forgotRepo.findByEmailAndToken(request.getEmail(), request.getToken());
 
         if (optionalForgotPassword.isPresent()) {
+            ForgotPassword forgotPassword = optionalForgotPassword.get();
             Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
-
-            if (optionalUser.isPresent()) {
-                User user = optionalUser.get();
-                String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
-                user.setPassword(hashedPassword);
-                userRepository.save(user);
-                return ResponseEntity.ok("Password updated successfully!");
-            } else {
-                return ResponseEntity.ok("User not found.");
+            // Check if the token has expired
+            if (System.currentTimeMillis() < forgotPassword.getExpirationTime()) {
+                if (optionalUser.isPresent()) {
+                    User user = optionalUser.get();
+                    String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+                    user.setPassword(hashedPassword);
+                    userRepository.save(user);
+                    return ResponseEntity.ok("Password updated successfully!");
+                } else {
+                    return ResponseEntity.ok("User not found.");
+                }
             }
+            else{
+                return ResponseEntity.ok("Token is expired");
+            }
+
+            
+
+            
         } else {
             return ResponseEntity.ok("Invalid email or token.");
         }
     }
-
-
 
 
     @PostMapping("/login")
@@ -89,10 +126,10 @@ public class UserController {
             {
                 return ResponseEntity.ok("Login successful");
             } else {
-                return ResponseEntity.ok("Incorrect Password!!!");
+                return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("User not found!!");
             }
         } else {    
-            return ResponseEntity.ok("User not found.");
+            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("User not found!!");
         }
     }
 

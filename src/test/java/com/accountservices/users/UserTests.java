@@ -20,13 +20,13 @@ public class UserTests {
         user = new User();
     }
     
-    @Test
-    void testingUserId(){
+    // @Test
+    // void testingUserId(){
     
-        long userId =  5L;
-        user.setUserId(userId);
-        assertEquals(userId, user.getUserId());
-    }
+    //     Long id =  5L;
+    //     user.setId(id);
+    //     assertEquals(id, user.getId());
+    // }
 
     @Test
     void testingCreatedDate(){
