@@ -2,6 +2,7 @@ package com.accountservices.users.Controllers;
     
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,8 @@ import com.accountservices.users.Model.ForgotPassword;
 import com.accountservices.users.Model.User;
 import com.accountservices.users.Repositories.ForgotRepo;
 import com.accountservices.users.Repositories.UserRepository;
+
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +36,7 @@ public class UserController {
     @PostMapping("/signup")
     public void postUser(@RequestBody User user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-        user.setPassword(hashedPassword);
+         user.setPassword(hashedPassword);
         userRepository.save(user);
     }
 
@@ -85,14 +88,11 @@ public class UserController {
     //     }
     // }
     @PostMapping("/forgotpassword/update")
-    public ResponseEntity<String> updatePassword(@RequestBody ForgotPassword request) {
+    public ResponseEntity<String> updatePassword(@RequestBody ForgotPassword request, String password) {
         Optional<ForgotPassword> optionalForgotPassword = forgotRepo.findByEmailAndToken(request.getEmail(), request.getToken());
 
         if (optionalForgotPassword.isPresent()) {
-            ForgotPassword forgotPassword = optionalForgotPassword.get();
             Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
-            // Check if the token has expired
-            if (System.currentTimeMillis() < forgotPassword.getExpirationTime()) {
                 if (optionalUser.isPresent()) {
                     User user = optionalUser.get();
                     String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
@@ -103,35 +103,76 @@ public class UserController {
                     return ResponseEntity.ok("User not found.");
                 }
             }
-            else{
-                return ResponseEntity.ok("Token is expired");
-            }
-
-            
-
-            
-        } else {
+        else {
             return ResponseEntity.ok("Invalid email or token.");
         }
     }
 
 
+        // @PostMapping("/login")
+        // public ResponseEntity<Object> login(@RequestBody User user) {
+        //     Optional<User> optional = userRepository.findByEmail(user.getEmail());
+
+        //     if (optional.isPresent()) {
+        //         User userDb = optional.get();
+        //         if (user.getPassword().equals(userDb.getPassword())) {
+        //             Map<String, Object> responseJson = new HashMap<>();
+        //             responseJson.put("message", "Login successful");
+        //             responseJson.put("role", userDb.getRole());
+        //             return ResponseEntity.ok(responseJson);
+        //         } else {
+        //             Map<String, Object> errorResponse = new HashMap<>();
+        //             errorResponse.put("error", "Invalid credentials");
+        //             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        //         }
+        //     } else {
+        //         Map<String, Object> errorResponse = new HashMap<>();
+        //         errorResponse.put("error", "User not found");
+        //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        //     }
+        // }
+
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
+    public ResponseEntity<Object> login(@RequestBody User user) {
         Optional<User> optional = userRepository.findByEmail(user.getEmail());
 
         if (optional.isPresent()) {
             User userDb = optional.get();
-            if (BCrypt.checkpw(user.getPassword(), userDb.getPassword()))
-            {
-                return ResponseEntity.ok("Login successful");
+            if (BCrypt.checkpw(user.getPassword(), userDb.getPassword())) {
+                Map<String, Object> responseJson = new HashMap<>();
+                responseJson.put("message", "Login successful");
+                responseJson.put("role", userDb.getRole());
+                return ResponseEntity.ok(responseJson);
             } else {
-                return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("User not found!!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid credentials");
             }
-        } else {    
-            return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("User not found!!");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
     }
+    
+    // @PostMapping("/login")
+    // public ResponseEntity<Object> login(@RequestBody User user) {
+    //     Optional<User> optional = userRepository.findByEmail(user.getEmail());
+
+    //     if (optional.isPresent()) {
+    //         User userDb = optional.get();
+    //         if (BCrypt.checkpw(user.getPassword(), userDb.getPassword()))
+    //         {
+    //             if(user.getPassword().equals(userDb.getPassword())) {
+    //                 Map<String, Object> responseJson = new HashMap<>();
+    //                 responseJson.put("message", "Login successful");
+    //                 responseJson.put("role", userDb.getRole());
+    //              return ResponseEntity.ok(responseJson);
+    //             }
+    //         } else {
+    //             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("User not found!!");
+    //         }
+    //     } else {    
+    //         return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("User not found!!");
+    //     }
+    //     return null;
+    // }
 
 
     @DeleteMapping("/delete")
