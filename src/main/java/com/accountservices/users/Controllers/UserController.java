@@ -32,12 +32,22 @@ public class UserController {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+     @GetMapping("/get/{id}")
+    public User getUserById(@PathVariable Long id) {
+         return  userRepository.findById(id).orElse(null);
+    };
+
+    // @GetMapping("/get/{id}")
+    // public ResponseEntity<?> getbyID(@PathVariable Long id){
+    //     Optional
+    //     return null;
+    // }
 
     @PostMapping("/signup")
-    public void postUser(@RequestBody User user) {
+    public User postUser(@RequestBody User user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
          user.setPassword(hashedPassword);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @PostMapping("/ForgotPassword/{email}")
