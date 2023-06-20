@@ -1,5 +1,11 @@
 package com.accountservices.users.Controllers;
+<<<<<<< HEAD
     
+=======
+
+import java.util.List;
+import java.util.Optional;
+>>>>>>> 9436a3d (....)
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +17,7 @@ import com.accountservices.users.Model.User;
 import com.accountservices.users.Repositories.ForgotRepo;
 import com.accountservices.users.Repositories.UserRepository;
 
+<<<<<<< HEAD
 import jakarta.persistence.criteria.CriteriaBuilder.In;
 
 import java.util.HashMap;
@@ -18,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+=======
+>>>>>>> 9436a3d (....)
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/user")
@@ -30,10 +39,20 @@ public class UserController {
 
     @GetMapping("")
     public List<User> getAllUsers() {
+<<<<<<< HEAD
         return userRepository.findAll();
+=======
+        return userRepo.findAll();
+>>>>>>> 9436a3d (....)
     }
 
+    @GetMapping("/get/{id}")
+    public User getUserById(@PathVariable Long id) {
+         return  userRepo.findById(id).orElse(null);
+    };
+
     @PostMapping("/signup")
+<<<<<<< HEAD
     public void postUser(@RequestBody User user) {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
          user.setPassword(hashedPassword);
@@ -132,6 +151,14 @@ public class UserController {
         //     }
         // }
 
+=======
+    public void post_User(@RequestBody User user) {
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashedPassword);
+        this.userRepo.save(user);
+    }
+
+>>>>>>> 9436a3d (....)
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user) {
         Optional<User> optional = userRepository.findByEmail(user.getEmail());
@@ -139,6 +166,7 @@ public class UserController {
         if (optional.isPresent()) {
             User userDb = optional.get();
             if (BCrypt.checkpw(user.getPassword(), userDb.getPassword())) {
+<<<<<<< HEAD
                 Map<String, Object> responseJson = new HashMap<>();
                 responseJson.put("message", "Login successful");
                 responseJson.put("role", userDb.getRole());
@@ -148,6 +176,14 @@ public class UserController {
             }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+=======
+                return ResponseEntity.ok("Login successful");
+            } else {
+                return ResponseEntity.status(400).body("Invalid User");
+            }
+        } else {
+            return ResponseEntity.ok("User not found.");
+>>>>>>> 9436a3d (....)
         }
     }
     
@@ -174,25 +210,50 @@ public class UserController {
     //     return null;
     // }
 
+<<<<<<< HEAD
 
     @DeleteMapping("/delete")
     public String deleteUser(User user) {
         userRepository.delete(user);
         return "User deleted";
+=======
+    @PostMapping("/update")
+    public String updateUsers(@RequestBody User user) {
+        this.userRepo.save(user);
+        return "user details updated";
+    }
+
+    @DeleteMapping("/delete")
+    public String deleteUser(User user) {
+        this.userRepo.delete(user);
+        return "user deleted";
+>>>>>>> 9436a3d (....)
     }
 
     @DeleteMapping("/delete/{id}")
     public String deleteById(@PathVariable Long id) {
+<<<<<<< HEAD
         userRepository.deleteById(id);
         return "User with ID has been deleted!";
+=======
+        this.userRepo.deleteById(id);
+        return "User of Id has been deleted!!";
+>>>>>>> 9436a3d (....)
     }
 
     @PostMapping("/update/{id}")
     public String updateById(@PathVariable Long id, @RequestBody User newUser) {
+<<<<<<< HEAD
         User existingUser = userRepository.findById(id).orElse(null);
 
         if (existingUser != null) {
             existingUser.setId(newUser.getId());
+=======
+        User existingUser = userRepo.findById(id).orElse(null);
+
+        if (existingUser != null) {
+            existingUser.setUserId(newUser.getUserId());
+>>>>>>> 9436a3d (....)
             existingUser.setCreated(newUser.getCreated());
             existingUser.setUpdated(newUser.getUpdated());
             existingUser.setEmail(newUser.getEmail());
@@ -206,9 +267,19 @@ public class UserController {
             existingUser.setRole(newUser.getRole());
             existingUser.set_active(newUser.is_active());
 
+<<<<<<< HEAD
             userRepository.save(existingUser);
         }
 
         return "User details updated successfully!";
     }
+=======
+            userRepo.save(newUser);
+
+        }
+
+        return "User Details Updated Successfully!!";
+    }
+
+>>>>>>> 9436a3d (....)
 }
