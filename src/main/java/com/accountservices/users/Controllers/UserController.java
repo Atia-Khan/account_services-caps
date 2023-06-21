@@ -151,7 +151,7 @@ public class UserController {
             if (BCrypt.checkpw(user.getPassword(), userDb.getPassword())) {
                 Map<String, Object> responseJson = new HashMap<>();
                 responseJson.put("message", "Login successful");
-                responseJson.put("user", userDb);
+                // responseJson.put("user", userDb);
                 responseJson.put("role", userDb.getRole());
                 return ResponseEntity.ok(responseJson);
             } else {
