@@ -3,16 +3,12 @@ package com.accountservices.users.Controllers;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.accountservices.users.Model.ForgotPassword;
 import com.accountservices.users.Model.User;
 import com.accountservices.users.Repositories.ForgotRepo;
 import com.accountservices.users.Repositories.UserRepository;
-
-import jakarta.persistence.criteria.CriteriaBuilder.In;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +32,6 @@ public class UserController {
     public User getUserById(@PathVariable Long id) {
          return  userRepository.findById(id).orElse(null);
     };
-
-    // @GetMapping("/get/{id}")
-    // public ResponseEntity<?> getbyID(@PathVariable Long id){
-    //     Optional
-    //     return null;
-    // }
 
     @PostMapping("/signup")
     public User postUser(@RequestBody User user) {
@@ -70,33 +60,6 @@ public class UserController {
         forgotRepo.save(forgotPassword);
         return ResponseEntity.ok("Data Saved");
     }
-
-    // @PostMapping("/ForgotPassword/token")
-    // public ResponseEntity<String> saveForgotPasswordToken(@RequestBody ForgotPassword forgotPassword) {
-    //     forgotRepo.save(forgotPassword);
-    //     return ResponseEntity.ok("Data Saved");
-    // }
-
-    // @PostMapping("/forgotpassword/update")
-    // public ResponseEntity<String> updatePassword(@RequestBody ForgotPassword request) {
-    //     Optional<ForgotPassword> optionalForgotPassword = forgotRepo.findByEmailAndToken(request.getEmail(), request.getToken());
-
-    //     if (optionalForgotPassword.isPresent()) {
-    //         Optional<User> optionalUser = userRepository.findByEmail(request.getEmail());
-
-    //         if (optionalUser.isPresent()) {
-    //             User user = optionalUser.get();
-    //             String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
-    //             user.setPassword(hashedPassword);
-    //             userRepository.save(user);
-    //             return ResponseEntity.ok("Password updated successfully!");
-    //         } else {
-    //             return ResponseEntity.ok("User not found.");
-    //         }
-    //     } else {
-    //         return ResponseEntity.ok("Invalid email or token.");
-    //     }
-    // }
     @PostMapping("/forgotpassword/update")
     public ResponseEntity<String> updatePassword(@RequestBody ForgotPassword request, String password) {
         Optional<ForgotPassword> optionalForgotPassword = forgotRepo.findByEmailAndToken(request.getEmail(), request.getToken());
@@ -118,30 +81,6 @@ public class UserController {
         }
     }
 
-
-        // @PostMapping("/login")
-        // public ResponseEntity<Object> login(@RequestBody User user) {
-        //     Optional<User> optional = userRepository.findByEmail(user.getEmail());
-
-        //     if (optional.isPresent()) {
-        //         User userDb = optional.get();
-        //         if (user.getPassword().equals(userDb.getPassword())) {
-        //             Map<String, Object> responseJson = new HashMap<>();
-        //             responseJson.put("message", "Login successful");
-        //             responseJson.put("role", userDb.getRole());
-        //             return ResponseEntity.ok(responseJson);
-        //         } else {
-        //             Map<String, Object> errorResponse = new HashMap<>();
-        //             errorResponse.put("error", "Invalid credentials");
-        //             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        //         }
-        //     } else {
-        //         Map<String, Object> errorResponse = new HashMap<>();
-        //         errorResponse.put("error", "User not found");
-        //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        //     }
-        // }
-
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody User user) {
         Optional<User> optional = userRepository.findByEmail(user.getEmail());
@@ -161,29 +100,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
     }
-    
-    // @PostMapping("/login")
-    // public ResponseEntity<Object> login(@RequestBody User user) {
-    //     Optional<User> optional = userRepository.findByEmail(user.getEmail());
-
-    //     if (optional.isPresent()) {
-    //         User userDb = optional.get();
-    //         if (BCrypt.checkpw(user.getPassword(), userDb.getPassword()))
-    //         {
-    //             if(user.getPassword().equals(userDb.getPassword())) {
-    //                 Map<String, Object> responseJson = new HashMap<>();
-    //                 responseJson.put("message", "Login successful");
-    //                 responseJson.put("role", userDb.getRole());
-    //              return ResponseEntity.ok(responseJson);
-    //             }
-    //         } else {
-    //             return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("User not found!!");
-    //         }
-    //     } else {    
-    //         return ResponseEntity.status(HttpStatusCode.valueOf(400)).body("User not found!!");
-    //     }
-    //     return null;
-    // }
 
 
     @DeleteMapping("/delete")
