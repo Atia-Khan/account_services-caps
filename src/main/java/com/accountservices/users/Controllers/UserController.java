@@ -32,6 +32,14 @@ public class UserController {
     public User getUserById(@PathVariable Long id) {
          return  userRepository.findById(id).orElse(null);
     };
+    // API'S for DEG
+    @PostMapping("/add")
+    public User addUser(@RequestBody User user) {
+        String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+         user.setPassword(hashedPassword);
+        return userRepository.save(user);
+    }
+
 
     @PostMapping("/signup")
     public User postUser(@RequestBody User user) {
