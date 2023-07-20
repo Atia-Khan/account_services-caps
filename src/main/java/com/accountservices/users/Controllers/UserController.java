@@ -9,6 +9,8 @@ import com.accountservices.users.Model.ForgotPassword;
 import com.accountservices.users.Model.User;
 import com.accountservices.users.Repositories.ForgotRepo;
 import com.accountservices.users.Repositories.UserRepository;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,19 @@ public class UserController {
     @GetMapping("")
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    @PostMapping("/addUsers")
+    public ResponseEntity<List<User>> addUsers(@RequestBody List<User> users) {
+        List<User> savedUsers = new ArrayList<>();
+
+        for (User user : users) {
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+            user.setPassword(hashedPassword);
+            savedUsers.add(userRepository.save(user));
+        }
+
+        return ResponseEntity.ok(savedUsers);
     }
      @GetMapping("/get/{id}")
     public User getUserById(@PathVariable Long id) {
