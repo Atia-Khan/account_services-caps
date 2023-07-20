@@ -31,18 +31,7 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PostMapping("/addUsers")
-    public ResponseEntity<List<User>> addUsers(@RequestBody List<User> users) {
-        List<User> savedUsers = new ArrayList<>();
-
-        for (User user : users) {
-            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-            user.setPassword(hashedPassword);
-            savedUsers.add(userRepository.save(user));
-        }
-
-        return ResponseEntity.ok(savedUsers);
-    }
+   
      @GetMapping("/get/{id}")
     public User getUserById(@PathVariable Long id) {
          return  userRepository.findById(id).orElse(null);
